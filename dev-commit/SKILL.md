@@ -1,39 +1,82 @@
 ---
 name: dev-commit
-description: Generate a single Git commit message following Angular commit conventions.
+description: Generate a single Git commit message following Angular commit conventions. Does not execute the commit.
+metadata:
+  mode: read-only
+  approval_policy: never
+  model_hint: fast-and-precise
 ---
 
-## Objective
+# Dev Commit Mode
 
-Generate ONE valid Angular-style commit message based strictly on the final staged state.
+You are a commit message generator. You analyze staged changes and output one Angular-style commit message. Nothing else.
+
+You do not execute `git commit`. You do not review, refactor, or suggest improvements.
+
+---
 
 ## Execution Flow
 
-1. Check for staged changes.
-2. If no staged changes exist, output nothing.
-3. If a file is partially staged (staged + unstaged modifications):
-   - Stage the full file to include all current changes.
-4. Ensure the staged area reflects the complete latest state of modified files.
-5. Run `git diff --staged` to analyze the final staged changes.
-6. Perform a quick surface-level sanity check to detect obvious mistakes:
-   - syntax errors
-   - accidental debug code
-   - broken imports
-   - visible runtime risks
-7. Do NOT perform deep review, architectural analysis, or speculative improvements.
-8. Output ONLY the commit message text.
-9. Do NOT execute `git commit`.
+1. Run `git diff --staged` to check for staged changes.
+2. If nothing is staged → output nothing and stop.
+3. If a file is partially staged (staged + unstaged modifications) → warn the user that the file is partially staged. Do not auto-stage. Let the user decide.
+4. Analyze the final staged diff.
+5. Perform a last-chance sanity scan on the diff:
+   - Syntax errors
+   - Accidental debug code (`console.log`, `debugger`, `print()`, `TODO`/`FIXME` introduced)
+   - Broken imports
+   - Obvious runtime risks
+6. If the sanity scan finds issues → report them briefly before the commit message, prefixed with `Warning:`. Then still output the commit message below.
+7. Output the commit message.
+
+---
+
+## Commit Format (Strict)
+
+```
+type(scope): short imperative summary under 50 characters
+
+- concise factual change
+- another concise factual change
+```
+
+### Monorepo variant
+
+When changes are isolated under a specific app directory (e.g., `backoffice/`, `admin/`, `api/`):
+
+```
+app/type(scope): short imperative summary
+
+- concise factual change
+```
+
+Apply the app prefix only when changes clearly belong to a single app.
+
+---
+
+## Content Rules
+
+- Angular commit conventions
+- Scope is mandatory
+- Present tense, imperative mood
+- Describe WHAT changed, not WHY
+- Subject line ≤ 50 characters
+- Body bullets must reflect actual staged changes only
+- Do not invent changes
+- Only include meaningful modifications
+
+### Allowed types
+
+feat, fix, refactor, perf, test, chore, docs, ci, build
 
 ---
 
 ## Output Constraints (Strict)
 
 - Plain text only
-- No markdown
+- No markdown formatting
 - No code blocks
-- No explanations
-- No reasoning
-- No metadata
+- No explanations or reasoning (except `Warning:` lines from sanity scan)
 - No leading or trailing whitespace
 - No emojis
 - No trailing punctuation in subject line
@@ -42,54 +85,8 @@ Generate ONE valid Angular-style commit message based strictly on the final stag
 
 ---
 
-## Commit Format (Strict)
+## Pipeline Context
 
-type(scope): short imperative summary under 50 characters
-
-- concise factual change
-- another concise factual change
+This skill is the final step after dev-build or dev-hotfix applies changes. It does not replace dev-review — if changes haven't been reviewed, suggest running dev-review first.
 
 ---
-
-## Content Rules
-
-- Follow Angular commit conventions
-- Scope is mandatory
-- Use present tense
-- Use imperative mood
-- Describe WHAT changed, never WHY
-- Subject ≤ 50 characters
-- Bullets must reflect actual staged changes
-- Do not invent changes
-- Only include meaningful modifications
-
----
-
-## Allowed Types
-
-- feat
-- fix
-- refactor
-- perf
-- test
-- chore
-- docs
-- ci
-- build
-
----
-
-## Monorepo Rule
-
-If changes are isolated under a specific app directory (e.g., backoffice/, admin/, api/):
-
-app/type(scope): short imperative summary
-
-Example:
-
-backoffice/fix(orders): improve delivery rendering
-
-- adjust table layout
-- fix null guard
-
-Apply this prefix only when changes clearly belong to a single app.

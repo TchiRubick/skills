@@ -1,15 +1,16 @@
 ---
 name: codex-aftercare
 description: Inspect completed work and extract lasting insights into `.codex` for future improvement.
+metadata:
+  mode: execution
+  approval_policy: always
+  model_hint: reasoning-heavy
 ---
 
 # codex-aftercare — Post-Work Knowledge Capture
 
-## Objective
-
-After a task, workflow, bugfix, refactor, or feature implementation is completed, analyze what happened and determine whether any information should be added to `.codex` for future use.
-
-The goal is to evolve `.codex` into a structured, high-signal knowledge base that improves future Codex performance and reduces repeated mistakes.
+You are a senior engineer performing post-implementation knowledge extraction.
+You analyze completed work and persist high-signal learnings into `.codex/` for future use.
 
 This skill must:
 
@@ -34,7 +35,7 @@ This skill must:
 - Do not invent learnings that did not occur.
 - Do not add trivial or obvious information.
 - Every new entry must include date and source context.
-- After completion: print `git status` and `git diff`.
+- Do not require Git commands or commit metadata for this workflow.
 
 No extra commentary beyond the summary.
 
@@ -42,13 +43,18 @@ No extra commentary beyond the summary.
 
 ## Execution Steps
 
-### 1️⃣ Review the Completed Work
+### 1) Verify workspace exists
+
+Check that `.codex/` and its expected structure exist.
+If missing, inform the user to run `codex-init` first and stop.
+
+### 2) Review the completed work
 
 Analyze:
 
 - Code changes
-- Commit message
-- Diff
+- Session/task objective
+- Modified files and content deltas
 - Errors encountered
 - Test failures
 - Edge cases handled
@@ -68,9 +74,18 @@ Ignore:
 - Trivial fixes
 - Temporary debugging steps
 
----
+### 3) Filter signal quality
 
-### 2️⃣ Classify the Knowledge
+Before classifying or writing anything, ask:
+
+- Will this matter in 3 months?
+- Would future me forget this?
+- Did this cause friction, risk, or deep reasoning?
+- Is this reusable?
+
+If the answer is no for all → skip the insight entirely.
+
+### 4) Classify the knowledge
 
 Decide where the insight belongs:
 
@@ -91,9 +106,17 @@ If it does not clearly fit any category:
 
 Do NOT create redundant categories.
 
----
+### 5) Deduplication check
 
-### 3️⃣ Structured Append Format
+Before writing:
+
+- Search `.codex` for similar content.
+- If similar content exists:
+  - Merge insight into existing section.
+  - Add date + source.
+- Avoid re-explaining principles already in constitution.
+
+### 6) Structured append format
 
 #### For Decisions (`context/decisions.md`)
 
@@ -114,7 +137,7 @@ Why this approach?
 How this affects future work.
 
 **References:**
-Commit hash / file path / PR link.
+File path / ticket link / task note.
 
 ---
 
@@ -171,39 +194,11 @@ Example:
 
 ---
 
-### 4️⃣ Deduplication Check
-
-Before writing:
-
-- Search `.codex` for similar content.
-- If similar content exists:
-  - Merge insight into existing section.
-  - Add date + source.
-- Avoid re-explaining principles already in constitution.
-
-High signal only.
-
----
-
-### 5️⃣ Validate Signal Quality
-
-Before appending, ask:
-
-- Will this matter in 3 months?
-- Would future me forget this?
-- Did this cause friction, risk, or deep reasoning?
-- Is this reusable?
-
-If the answer is no → skip it.
-
----
-
-### 6️⃣ Output Summary
+### 7) Output summary
 
 After modifications, print:
 
-git status
-git diff
+List of changed `.codex` files with a short description of each appended section.
 
 Then summarize:
 
@@ -215,41 +210,3 @@ Then summarize:
 No additional commentary.
 
 ---
-
-## What This Skill Prevents
-
-- Re-solving the same architectural mistake twice
-- Re-discovering the same edge case
-- Forgetting implicit constraints
-- Losing reasoning context
-- Vibecoding drift over time
-
----
-
-## Intended Usage
-
-Run this skill:
-
-- After completing a feature
-- After merging a PR
-- After fixing a production bug
-- After resolving a complex design decision
-- After refactoring core modules
-- After debugging a tricky issue
-
-Do NOT run after trivial edits.
-
----
-
-## Result
-
-`.codex` becomes a continuously improving engineering memory system.
-
-Future tasks become:
-
-- Faster
-- Safer
-- More consistent
-- Less repetitive
-
-Codex learns from your real work — not assumptions.
