@@ -18,7 +18,7 @@ Rules:
 - Uses `.codex/` as the workspace folder
 - Creates `AGENTS.md` at repository root
 - No symlinks
-- Only creates files/directories if missing
+- If `.codex/` already exists, refresh and update it in place
 - Prefills new files based on repository inspection
 - Detects and acknowledges existing AI tool folders/files
 
@@ -26,12 +26,13 @@ Rules:
 
 ## Safety Rules (Mandatory)
 
-- NEVER overwrite existing files or directories.
+- Do not perform destructive rewrites of existing files or directories.
 - If a required path exists but is the wrong type (e.g. file where directory is expected) → STOP and report.
 - Do not delete anything.
 - Allow safe in-place updates for existing `.codex/*` files and root `AGENTS.md`.
 - Preserve user-authored sections; update by merge/append, not destructive rewrite.
 - If an existing file cannot be updated safely without ambiguity → STOP and report.
+- When adding or refreshing content in an existing file, write it into the corresponding file as merged documentation (no changelog format).
 
 ### Merge strategy for existing files
 
@@ -39,7 +40,7 @@ When updating an existing `.codex/` file:
 
 - Identify sections by their markdown headings.
 - Append new sections that do not exist yet.
-- For sections that already exist: only update factual content (e.g. commands from manifests) if the current value is a placeholder or clearly outdated. Leave user-written prose, decisions, and rules untouched.
+- For sections that already exist: append or merge updates in the matching section/file when content is stale or incomplete. Keep prior history unless it is clearly invalid.
 - Never reorder, remove, or rewrite existing sections.
 - If uncertain whether a section should be updated → skip it and note in the summary.
 
@@ -63,7 +64,6 @@ Inside it, create this structure:
       context/
         architecture.md
         commands.md
-        decisions.md
         glossary.md
       tooling/
       snippets/
@@ -109,6 +109,7 @@ For each target file:
 
 - If missing: create using the templates below.
 - If existing: apply the merge strategy from Safety Rules.
+- Add refreshed content to the corresponding file as merged documentation, not as untracked free text.
 
 #### `.codex/README.md`
 
@@ -244,18 +245,6 @@ For each target file:
     - Build: <from manifest if found>
     - Lint/Typecheck: <from manifest if found>
     - CI notes: <from pipeline config if found>
-
----
-
-#### `.codex/context/decisions.md`
-
-    # Decisions
-
-    Record architectural decisions:
-    - Date
-    - Context
-    - Decision
-    - Consequences
 
 ---
 

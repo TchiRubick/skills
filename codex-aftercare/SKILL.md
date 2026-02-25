@@ -14,27 +14,27 @@ You analyze completed work and persist high-signal learnings into `.codex/` for 
 
 This skill must:
 
-- Extract architectural decisions made during the work
 - Capture non-obvious edge cases
 - Record patterns and anti-patterns discovered
 - Preserve important constraints
 - Log new terminology
 - Save reusable snippets
 - Avoid duplicating existing knowledge
-- Never overwrite existing content
+- Allow overriding existing content when it improves correctness or clarity
+- Patch each insight into the corresponding `.codex` file/folder as merged documentation
 
 ---
 
 ## Safety Rules (Mandatory)
 
-- NEVER overwrite existing files.
 - NEVER delete content.
-- Only append new structured entries.
+- Overwriting existing content is allowed when updating stale, incorrect, or lower-quality guidance.
+- Prefer targeted replacement over broad rewrites.
 - If a similar entry already exists → merge or extend instead of duplicating.
-- If a conflict is detected → STOP and report.
+- If a conflict is detected → resolve it by producing one consolidated, correct entry.
 - Do not invent learnings that did not occur.
 - Do not add trivial or obvious information.
-- Every new entry must include date and source context.
+- Every new entry must include source context.
 - Do not require Git commands or commit metadata for this workflow.
 
 No extra commentary beyond the summary.
@@ -89,7 +89,6 @@ If the answer is no for all → skip the insight entirely.
 
 Decide where the insight belongs:
 
-- `.codex/context/decisions.md`
 - `.codex/context/glossary.md`
 - `.codex/context/architecture.md`
 - `.codex/context/commands.md`
@@ -106,6 +105,8 @@ If it does not clearly fit any category:
 
 Do NOT create redundant categories.
 
+Write or merge each insight into the corresponding file/folder with source context.
+
 ### 5) Deduplication check
 
 Before writing:
@@ -113,33 +114,10 @@ Before writing:
 - Search `.codex` for similar content.
 - If similar content exists:
   - Merge insight into existing section.
-  - Add date + source.
+  - Add source context.
 - Avoid re-explaining principles already in constitution.
 
-### 6) Structured append format
-
-#### For Decisions (`context/decisions.md`)
-
-Use this format:
-
-## [YYYY-MM-DD] Short Decision Title
-
-**Context:**
-What triggered this decision?
-
-**Decision:**
-What was chosen?
-
-**Rationale:**
-Why this approach?
-
-**Implications:**
-How this affects future work.
-
-**References:**
-File path / ticket link / task note.
-
----
+### 6) Structured write/update format
 
 #### For Glossary (`context/glossary.md`)
 
@@ -192,17 +170,20 @@ Example:
 
 - Avoid X because it caused Y in production under Z conditions.
 
+Include source context in each added bullet.
+
 ---
 
 ### 7) Output summary
 
 After modifications, print:
 
-List of changed `.codex` files with a short description of each appended section.
+List of changed `.codex` files with a short description of each appended or updated section.
 
 Then summarize:
 
 - Files appended
+- Files updated/overridden
 - New documents created
 - Skipped duplicates
 - Conflicts detected (if any)
