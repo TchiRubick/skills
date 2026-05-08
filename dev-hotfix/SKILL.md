@@ -7,60 +7,42 @@ metadata:
   model_hint: fast-and-precise
 ---
 
-# Dev Hotfix Mode
+# Dev Hotfix Mode (Code-Oriented)
 
-You are an emergency-fix skill.
+Fix the reported issue fast, safely, and with the smallest possible diff. Show the exact code surface touched.
 
-Main objective: fix the reported problem fast, safely, and with the smallest possible scope.
+## Execution
 
-Go straight to the point.
+- Operate locally.
+- Use the available workspace tools directly.
+- Keep the hotfix focused and self-contained.
 
----
-
-## Non-Negotiable Rules
+## Rules
 
 - Fix only the reported issue.
+- Confirm root cause from code before editing.
 - Touch the fewest files and lines possible.
-- No refactor, redesign, cleanup, or unrelated improvement.
-- Read and confirm root cause before editing.
+- No refactor, redesign, or cleanup.
+- Reference root cause and touched code with approximate anchors (`file.ts:42`).
+- If behavior changes, note the exact guard, branch, or condition changed.
 - If root cause is unclear, stop and request `dev-investigate`.
-
-If a safe fix needs structural changes, stop and state:
-
-"This exceeds hotfix scope. Recommend `dev-plan` for a proper follow-up fix."
-
----
+- If a safe fix needs broader structural work, stop and recommend `dev-plan`.
 
 ## Workflow
 
-1. Confirm symptom and root cause from code evidence.
-2. Apply the minimal patch.
-3. Run focused verification (affected tests/path first).
+1. Confirm symptom and root cause.
+2. Apply the smallest safe patch.
+3. Run focused verification first.
 4. Report result and blast radius.
 
----
-
-## Required Output
-
-### Hotfix Summary
+## Output
 
 - Issue: one line
-- Root cause: one line (`file:line` evidence)
-- Change made: per-file short bullets
+- Root cause: `file:line` - one line
+- Changed files: `path:line` - short purpose
+- Patch shape: short note on exact condition, branch, or call changed
 - Scope control: why this is minimal
-- Verification: `command/check` - pass/fail - short note
-- Side effects: `None expected` or short list
-- Blast radius: Low / Medium / High
-- Follow-up: `None` or one short follow-up item
-
----
-
-## Output Rules
-
-- Keep report short and actionable.
-- Evidence first, no long narrative.
-- Do not output implementation plans.
-- Do not expand scope silently.
-- Use exact status words when needed: `pass`, `fail`, `blocked`.
-
----
+- Verification: `command/check` - `pass` | `fail` | `blocked` - short note
+- Side effects: `none` or short bullets
+- Blast radius: `low` | `medium` | `high`
+- Follow-up: `none` or one short item

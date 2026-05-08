@@ -1,105 +1,49 @@
 ---
 name: dev-commit
-description: Generate a single Git commit message following Angular commit conventions. Does not execute the commit.
+description: Create and execute a single Git commit from selected staged changes using an Angular-style commit message.
 metadata:
-  mode: read-only
+  mode: execution
   approval_policy: never
   model_hint: fast-and-precise
 ---
 
 # Dev Commit Mode
 
-You are the commit message skill in read-only mode.
+Commit the staged changes with one clear Angular-style message.
 
-Main objective: output one high-quality Angular-style commit message from staged changes.
+## Rules
 
----
-
-## Non-Negotiable Rules
-
-- Do not execute `git commit`.
+- Commit staged content only.
 - Do not edit or stage files.
-- Do not review, refactor, or suggest implementation changes.
-- Base output only on staged content.
-
----
+- Run only fast checks when detectable.
+- If a file is partially staged, warn and stop.
+- If nothing is staged, warn and stop.
 
 ## Workflow
 
-1. Run `git diff --staged` to check for staged changes.
-2. If nothing is staged → output nothing and stop.
-3. If a file is partially staged (staged + unstaged modifications) → warn the user that the file is partially staged. Do not auto-stage. Let the user decide.
-4. Analyze the final staged diff.
-5. Run lightweight project checks when available (fastest first):
-   - Lint/check command from project scripts or build files
-   - Typecheck/static analysis command
-   - Focused test command if quick and directly relevant
-   - If commands are not detectable or not runnable, continue and emit a short `Warning:` line
-6. Perform a last-chance sanity scan on the diff:
-   - Syntax errors
-   - Accidental debug code (`console.log`, `debugger`, `print()`, `TODO`/`FIXME` introduced)
-   - Broken imports
-   - Unused imports / unused variables / dead code introduced
-   - Obvious runtime risks
-7. If checks or sanity scan find issues → report them briefly before the commit message, prefixed with `Warning:`. Then still output the commit message below.
-8. Output the commit message.
+1. Inspect `git diff --staged`.
+2. Warn on empty staging or partially staged files.
+3. Run the fastest relevant checks you can detect.
+4. Sanity-scan the diff for debug code, broken imports, obvious runtime risks, and dead code.
+5. Generate the commit message.
+6. Run `git commit`.
 
-Use warning format: `Warning: <short issue>`.
+## Commit Message
 
----
+Use:
 
-## Required Output
+`type(scope): short imperative summary`
 
-Use this exact format:
+Optional body:
 
-```
-type(scope): short imperative summary under 50 characters
+- factual change
+- factual change
 
-- concise factual change
-- another concise factual change
-```
+Allowed types: `feat`, `fix`, `refactor`, `perf`, `test`, `chore`, `docs`, `ci`, `build`
 
-### Monorepo variant
+## Output
 
-When changes are isolated under a specific app directory (e.g., `backoffice/`, `admin/`, `api/`):
+Plain text only.
 
-```
-app/type(scope): short imperative summary
-
-- concise factual change
-```
-
-Apply the app prefix only when changes clearly belong to a single app.
-
----
-
-## Content Rules
-
-- Angular commit conventions
-- Scope is mandatory
-- Present tense, imperative mood
-- Describe WHAT changed, not WHY
-- Subject line ≤ 50 characters
-- Body bullets must reflect actual staged changes only
-- Do not invent changes
-- Only include meaningful modifications
-
-### Allowed types
-
-feat, fix, refactor, perf, test, chore, docs, ci, build
-
----
-
-## Output Rules
-
-- Plain text only
-- No markdown formatting
-- No code blocks
-- No explanations or reasoning (except `Warning:` lines from checks/sanity scan)
-- No leading or trailing whitespace
-- No emojis
-- No trailing punctuation in subject line
-- Exactly one blank line between subject and body
-- No extra blank lines
-
----
+- `Warning: ...` lines when needed
+- Final `git commit` result only

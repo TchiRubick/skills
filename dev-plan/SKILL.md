@@ -1,111 +1,97 @@
 ---
 name: dev-plan
 description: |
-  Planning-only mode. Generate a structured implementation plan without writing production code.
-  Never implement. Never ask to implement.
+  Generate a concise, code-oriented implementation plan.
+  Output must be directly actionable with minimal thinking.
+  No production-ready code, but close enough to copy-paste.
 metadata:
   mode: read-only
   approval_policy: never
   model_hint: reasoning-heavy
 ---
 
-# Dev Plan Mode
+# Dev Plan Mode (Code-Oriented)
 
-You are a senior technical architect writing implementation plans for a coding team.
+Produce a compact, implementation-ready plan focused on exact code changes.
 
-This skill is planning-only and read-only.
+---
 
-Main objective: provide a clear, implementation-ready plan without writing production code.
+## Execution
 
-## Non-Negotiable Rules
+- Operate locally.
+- Use the available workspace tools directly when more evidence or code exploration is needed.
+- Validate the plan before returning it.
 
-Do not:
+---
 
-- implement code
-- offer to implement
-- ask permission-to-proceed questions
+## Rules
 
-If a requirement is unclear, ask concise requirement-focused clarifications.
+- Planning only. Do not implement fully
+- No narration, no teaching
+- Prefer concrete edits over explanations
+- Every step must be executable with minimal thinking
+- Use exact file paths and approximate line anchors (`file.ts:42`)
+- ALWAYS include a code block for each change
+- Limit `Why` to max 1–2 lines
+- Skip empty sections
 
 ---
 
 ## Workflow
 
-1. Read relevant files and verify paths/symbols exist.
-2. Confirm scope, constraints, and risks.
-3. Produce an ordered, file-level implementation plan.
-4. Provide clear verification steps.
+1. Confirm scope if unclear (max 1–2 questions)
+2. Read relevant files.
+3. Write the plan
+4. Review and validate the plan.
 
 ---
 
-## Required Output
+## Output Format
 
-### 1) Goal
+### Goal
+1–2 lines
 
-1-2 sentences: what will be built/changed and why.
+### Assumptions
+- explicit or `none`
 
-### 2) Assumptions
-
-- Explicit assumptions only (skip if none).
-
-### 3) Impacted Files
-
-| File | Action | Purpose |
-|------|--------|---------|
-| `path/to/file.ts` | modify | One-line purpose |
-
-List every file expected to change.
-
-### 4) Implementation Steps
-
-For each step, include:
-
-- Step title
-- File path(s)
-- Why this step exists
-- New code to implement (not diff)
-- Watch-outs specific to this step
-- Verification checks
-
-Code blocks must show the target implementation directly, for example:
-
-```ts
-const validateInput = (input: Input): ValidationResult => {
-  // target implementation
-}
-```
-
-Never use diff format in this skill output.
-
-### 5) Risks
-
-- Key risks and how to mitigate each.
-
-### 6) Review Checklist
-
-- Concrete checks reviewers should focus on.
+### Start Here
+- `path/to/file.ts:line`
 
 ---
 
-## Output Rules
+## Steps
 
-- Keep it short and scannable.
-- Use precise file references and concrete steps.
-- Prefer small, deterministic steps over big rewrites.
-- New code examples must be copy-ready and typed.
-- Ensure the plan is understandable by the coding team without reinterpretation.
-- Verification checks should use: `command/check` - expected result.
+1. `Step title`  
+   File: `path/to/file.ts:line`  
+   Change:  
+       // code to add/replace (copy-paste ready)
 
----
+   Why: short justification (optional)
 
-## Scope Guidance
-
-- 1-3 steps: small change
-- 4-8 steps: typical feature
-- 9+ steps: split into phases
+2. `Step title`  
+   File: `path/to/file.ts:line`  
+   Change:  
+       // code
 
 ---
 
-## Amendment Protocol
+## Constraints
 
-When the user asks for changes, return the full updated plan (not partial fragments).
+- Do NOT use diff format (`+/-`)
+- Do NOT describe code without showing it
+- Do NOT exceed ~6 steps unless necessary
+- Keep total output tight
+- Each step must be executable independently when possible
+
+---
+
+## Verification
+
+- `command or check`
+- expected result
+
+---
+
+## Summary
+
+1–2 lines max
